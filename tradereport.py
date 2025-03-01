@@ -1,9 +1,9 @@
 import streamlit as st
 import pandas as pd
 
-# Function to handle file uploads and prompts for Account names
+# Function to handle file uploads and uses file names for column
 def upload_and_merge():
-    st.title("Merge CSV Files with Account Names")
+    st.title("Merge CSV Files with File Names")
 
     # File uploader for multiple files
     uploaded_files = st.file_uploader(
@@ -15,19 +15,17 @@ def upload_and_merge():
 
         # Process each uploaded file
         for uploaded_file in uploaded_files:
-            # Prompt user for Account name
-            account_name = st.text_input(f"What account is this? (File: {uploaded_file.name})")
+            # Use the file name (without extension) as the column value
+            file_name = uploaded_file.name.rsplit('.', 1)[0]  # Removes .csv extension
+            
+            # Read the uploaded CSV file
+            df = pd.read_csv(uploaded_file)
 
-            # Proceed if an account name is provided
-            if account_name:
-                # Read the uploaded CSV file
-                df = pd.read_csv(uploaded_file)
+            # Add the FileName column using the file name
+            df["FileName"] = file_name
 
-                # Add the Account column
-                df["Account"] = account_name
-
-                # Append to the list of dataframes
-                all_dataframes.append(df)
+            # Append to the list of dataframes
+            all_dataframes.append(df)
 
         # Merge all dataframes if any were uploaded
         if all_dataframes:
